@@ -3,14 +3,16 @@ services:
   adh-nginx:
     image: registry.cn-hangzhou.aliyuncs.com/awesome-digital-human/nginx:latest
     ports:
-      - "8080:80"
-      - "8443:443"
+      - "8880:80"
+      # - "8443:443"
     volumes:
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./docker/ssl:/etc/nginx/ssl
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     restart: always
   adh-web:
-    image: adh-web:0.1
+    build:
+      context: .
+      dockerfile: docker/adhWeb.Dockerfile
+    image: "adh-web:v3.0.0"
     restart: always
     networks:
       - shared_network
@@ -21,13 +23,16 @@ services:
       - ./web/.env:/workspace/.env
   # awesome digital human server
   adh-api:
-    image: adh-server:0.1
+    build:
+      context: .
+      dockerfile: docker/adhServer.Dockerfile
+    image: "adh-server:v3.0.0"
     restart: always
     networks:
       - shared_network
       - default
-    ports:
-      - "8880:8880"
+    # ports:
+    #   - "8000:8000"
     volumes:
       - ./configs:/workspace/configs
   adh-funasr:

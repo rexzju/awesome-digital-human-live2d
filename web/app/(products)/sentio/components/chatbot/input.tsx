@@ -190,7 +190,7 @@ export const ChatVadInput = memo(() => {
     const { startAudioTimer, stopAudioTimer } = useAudioTimer();
     const waveData = useRef<Uint8Array | null>();
     const drawId = useRef<number | null>(null);
-
+    console.log('positiveSpeechThreshold', parseFloat(process.env.NEXT_PUBLIC_VAD_POSITIVE_THRESHOLD));
     const handleSpeechEnd = async (audio: Float32Array) => {
         // 获取mp3数据, 转mp3的计算放到web客户端, 后端拿到的是mp3数据
         const mp3Blob = convertFloat32ArrayToMp3(audio);
@@ -204,6 +204,14 @@ export const ChatVadInput = memo(() => {
         baseAssetPath: getSrcPath("vad/"),
         onnxWASMBasePath: getSrcPath("vad/"),
         // model: "v5",
+        // 设置语音活动检测阈值
+        // 当置信度高于此值时认为检测到语音
+        positiveSpeechThreshold: parseFloat(process.env.NEXT_PUBLIC_VAD_POSITIVE_THRESHOLD || '0.5'),  // 从环境变量读取，默认0.5
+        // 打印positiveSpeechThreshold
+        // 当置信度低于此值时认为语音结束
+        negativeSpeechThreshold: 0.35, // 默认通常是0.35
+        // 语音开始前的缓冲帧数，防止丢失语音开头
+        preSpeechPadFrames: 10,
         onSpeechStart: () => {
             abort();
             startAudioTimer();

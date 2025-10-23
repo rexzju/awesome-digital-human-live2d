@@ -14,7 +14,8 @@ from .streamParser import *
 # https://www.cnblogs.com/nanshaobit/p/16060370.html
 import httpx
 RETRIES = 3
+# 设置适当的超时时间（30秒）而不是 None
 asyncTransport = httpx.AsyncHTTPTransport(retries=RETRIES, verify=False)
-httpxAsyncClient = httpx.AsyncClient(timeout=None, transport=asyncTransport)
+httpxAsyncClient = httpx.AsyncClient(timeout=30.0, transport=asyncTransport)
 syncTransport = httpx.HTTPTransport(retries=RETRIES, verify=False)
-httpxSyncClient = httpx.Client(timeout=None, transport=syncTransport)
+httpxSyncClient = httpx.Client(timeout=30.0, transport=syncTransport)
